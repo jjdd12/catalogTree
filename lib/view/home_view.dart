@@ -13,7 +13,8 @@ class NodeViewState extends State<NodeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title != null ? title : "Home"),
+        title: Text(isRoot ? "Home": title != null ? title : ""),
+        leading: new Icon(isRoot ? Icons.home : Icons.perm_media),
       ),
       body: _buildSuggestions(context),
       floatingActionButton: new FloatingActionButton(
@@ -22,6 +23,14 @@ class NodeViewState extends State<NodeView> {
         child: new Icon(Icons.add),
       ),
     );
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    if(isRoot){
+      updateNodesFromDb();
+    }
   }
 
   Widget _buildSuggestions(BuildContext context) {
@@ -47,7 +56,7 @@ class NodeViewState extends State<NodeView> {
 
   Widget _buildRow(NodeContainer node) {
     return ListTile(
-      leading: new Icon(node.category.icon),
+      leading: new Icon(node.category.icon, size: 32, color: Colors.black54,),
       title: Text(
         node.title,
         style: _biggerFont,
@@ -63,7 +72,8 @@ class NodeViewState extends State<NodeView> {
             return NodeView(
                 childrenNodes: nodes,
                 title: node.category.name,
-                currentNode: node.reference);
+                currentNode: node.reference,
+                isRoot: false);
           }));
         });
       },
@@ -107,4 +117,5 @@ class NodeView extends StatefulWidget {
     state.isRoot = isRoot;
     return state;
   }
+
 }

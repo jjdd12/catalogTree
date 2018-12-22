@@ -105,7 +105,7 @@ class NodeContainer {
         reference = node.reference,
         category = NodeRoute._(
           name: node.name,
-          icon: GalleryIcons.menu,
+          icon: Icons.perm_media,
         ),
         routeName = MovesMain.routeName;
 }

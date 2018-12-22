@@ -16,6 +16,7 @@ part 'model/acl.dart';
 part 'model/node.dart';
 part 'model/node-container.dart';
 part 'model/video.dart';
+part 'view/node/which_leaf.dart';
 
 class Landing extends StatefulWidget {
   Landing({Key key, this.title, this.childrenNodes}) : super(key: key);
@@ -39,16 +40,6 @@ class _LandingState extends State<Landing> {
 
   List<NodeContainer> childrenNodes;
 
-  Widget _buildRoot(){
-    Db db = new Db();
-    return db.getRootNodes((QuerySnapshot value) {
-      List<NodeContainer> nodes = new List<NodeContainer>();
-      value.documents.forEach((DocumentSnapshot document) {
-        nodes.add(NodeContainer.fromNode(Node.fromSnapshot(document)));
-      });
-      return new NodeView(childrenNodes: childrenNodes, isRoot: true);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +47,7 @@ class _LandingState extends State<Landing> {
       title: 'Forest',
       home: new SplashPage(),
       routes: <String, WidgetBuilder>{
-        '/root':(BuildContext context) => _buildRoot()
+        '/root':(BuildContext context) => new NodeView(childrenNodes: new List<NodeContainer>(), isRoot: true)
       },
     );
   }

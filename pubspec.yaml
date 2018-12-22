@@ -20,6 +20,7 @@ dependencies:
   uuid: ^1.0.0
   flutter_gallery_assets: 0.1.6
   google_sign_in: ^3.2.4
+  file_picker: ^1.0.2
 
 dev_dependencies:
   flutter_test:

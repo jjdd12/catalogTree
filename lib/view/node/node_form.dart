@@ -1,10 +1,12 @@
 part of catalog_tree;
+
 class NodeForm extends StatefulWidget {
   final DocumentReference parentNode;
   final bool isRoot;
   final Function onSave;
 
-  const NodeForm(this.onSave, {Key key, this.parentNode, this.isRoot = false}) : super(key: key);
+  const NodeForm(this.onSave, {Key key, this.parentNode, this.isRoot = false})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -27,7 +29,7 @@ class NodeFormState extends State<NodeForm> {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.all(25.0),
-        child: Form(key: _formKey, child: _buildFields()));
+        child: Form(key: _formKey, child: _buildCollectionFields()));
   }
 
   static Function emptyCheck = (value) {
@@ -40,20 +42,23 @@ class NodeFormState extends State<NodeForm> {
         labelText: 'Enter a $name',
       );
 
-  Widget _buildFields() {
+  Widget _buildCollectionFields() {
     Scaffold body = Scaffold(
         body: Column(
       children: <Widget>[
         TextFormField(
-            decoration: label('Name'),
-            validator: emptyCheck,
-            onSaved: (String value) => _data["name"] = value,
+          decoration: label('Name'),
+          validator: emptyCheck,
+          onSaved: (String value) => _data["name"] = value,
         ),
         SizedBox(
           height: 13.0,
         ),
-        TextFormField(decoration: label('Description'), validator: emptyCheck,
-          onSaved: (String value) => _data["description"] = value,),
+        TextFormField(
+          decoration: label('Description'),
+          validator: emptyCheck,
+          onSaved: (String value) => _data["description"] = value,
+        ),
         SizedBox(
           height: 13.0,
         ),
@@ -65,8 +70,7 @@ class NodeFormState extends State<NodeForm> {
               // the form is invalid.
               if (_formKey.currentState.validate()) {
                 _formKey.currentState.save();
-                // TODO display progress
-                  saveNode();
+                saveCollectionNode();
               }
             },
             child: Text('Save'),
@@ -77,13 +81,14 @@ class NodeFormState extends State<NodeForm> {
     return body;
   }
 
-  void saveNode() {
+  void saveCollectionNode() {
     //TODO handle fails and complete
-     _data["parent"] = parentNode;
+    _data["parent"] = parentNode;
     var acl = new Map<String, Map>();
-    acl["someSTringhere"] = AclLevel.toMap(AclLevel.forOwner());
+    acl[_user.uid] = AclLevel.toMap(AclLevel.forOwner());
     _data["acl"] = acl;
     _data["is_root"] = isRoot;
+    _data["owner"] = _user.uid;
     _db.createNode(_data);
     this.onSave();
     Navigator.pop(context);

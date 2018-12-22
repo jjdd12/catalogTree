@@ -2,6 +2,7 @@ part of catalog_tree;
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = new GoogleSignIn();
+FirebaseUser _user;
 
 Future<FirebaseUser> signInWithGoogle() async {
   // Attempt to get the currently authenticated user
@@ -25,7 +26,7 @@ Future<FirebaseUser> signInWithGoogle() async {
 
   assert(user != null);
   assert(!user.isAnonymous);
-
+  _user = user;
   return user;
 }
 
