@@ -7,7 +7,7 @@ enum VideoType {
 
 class Video {
   const Video({
-    this.id,
+    this.reference,
     this.source,
     this.type,
     this.thumbnail,
@@ -15,7 +15,7 @@ class Video {
     this.name
   });
 
-  final Uuid id;
+  final DocumentReference reference;
   final Source source;
   final VideoType type;
   final Image thumbnail;
@@ -26,8 +26,9 @@ class Video {
 
 
 class Source {
-  Source(this.type, this.owner);
-  final String type;
+  Source(this.path, this.owner, this.acl);
+  final ResourceAcl acl;
+  final String path;
   final FirebaseUser owner;
 }
 

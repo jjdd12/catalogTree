@@ -1,19 +1,18 @@
 part of catalog_tree;
 
-
 class NodeViewState extends State<NodeView> {
   List<NodeContainer> children;
   DocumentReference currentNode;
   bool isRoot;
   String title;
   final _suggestions = Set<NodeContainer>();
-  final _biggerFont = const TextStyle(fontSize: 18.0);
+  final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
   final Db db = new Db();
 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(isRoot ? "Home": title != null ? title : ""),
+        title: Text(isRoot ? "Home" : title != null ? title : ""),
         leading: new Icon(isRoot ? Icons.home : Icons.perm_media),
       ),
       body: _buildSuggestions(context),
@@ -26,9 +25,9 @@ class NodeViewState extends State<NodeView> {
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    if(isRoot){
+    if (isRoot) {
       updateNodesFromDb();
     }
   }
@@ -43,20 +42,23 @@ class NodeViewState extends State<NodeView> {
         // For odd rows, the function adds a Divider widget to visually
         // separate the entries. Note that the divider may be difficult
         // to see on smaller devices.
-        children:
-            children.map((dynamic node) => _buildRow(node)).toList());
+        children: children.map((dynamic node) => _buildRow(node)).toList());
   }
 
   void _showDialog() {
     showDialog(
         context: context,
-        builder: (BuildContext context) =>
-            new NodeForm(updateNodesFromDb, parentNode: currentNode, isRoot: isRoot));
+        builder: (BuildContext context) => new NodeForm(updateNodesFromDb, null,
+            parentNode: currentNode, isRoot: isRoot));
   }
 
   Widget _buildRow(NodeContainer node) {
     return ListTile(
-      leading: new Icon(node.category.icon, size: 32, color: Colors.black54,),
+      leading: new Icon(
+        node.category.icon,
+        size: 32,
+        color: Colors.black54,
+      ),
       title: Text(
         node.title,
         style: _biggerFont,
@@ -66,8 +68,7 @@ class NodeViewState extends State<NodeView> {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
             List<NodeContainer> nodes = new List<NodeContainer>();
             data.documents.forEach((DocumentSnapshot document) {
-              nodes
-                  .add(NodeContainer.fromNode(Node.fromSnapshot(document)));
+              nodes.add(NodeContainer.fromNode(Node.fromSnapshot(document)));
             });
             return NodeView(
                 childrenNodes: nodes,
@@ -81,11 +82,11 @@ class NodeViewState extends State<NodeView> {
   }
 
   nodesRefresh(QuerySnapshot value) {
-    setState(()=> children = NodeContainer.fromDb(value));
+    setState(() => children = NodeContainer.fromDb(value));
   }
 
   //refreshes the the children nodes from the database
-  updateNodesFromDb(){
+  updateNodesFromDb() {
     if (isRoot) {
       db.getRootNodes(nodesRefresh);
     } else {
@@ -117,5 +118,4 @@ class NodeView extends StatefulWidget {
     state.isRoot = isRoot;
     return state;
   }
-
 }

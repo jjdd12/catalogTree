@@ -20,7 +20,9 @@ dependencies:
   uuid: ^1.0.0
   flutter_gallery_assets: 0.1.6
   google_sign_in: ^3.2.4
-  file_picker: ^1.0.2
+  thumbnails: ^1.0.1
+  image_form_field:
+    path: /home/kalel/IdeaProjects/flutter_image_form_field/
 
 dev_dependencies:
   flutter_test:
