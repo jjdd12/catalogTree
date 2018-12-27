@@ -1,11 +1,12 @@
 part of catalog_tree;
 
 class NodeViewState extends State<NodeView> {
-  List<NodeContainer> children;
+  List<Object> children = List<Object>();
+  List<NodeContainer> childrenNodes;
+  List<Video> videos;
   DocumentReference currentNode;
   bool isRoot;
   String title;
-  final _suggestions = Set<NodeContainer>();
   final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
   final Db db = new Db();
 
@@ -15,7 +16,7 @@ class NodeViewState extends State<NodeView> {
         title: Text(isRoot ? "Home" : title != null ? title : ""),
         leading: new Icon(isRoot ? Icons.home : Icons.perm_media),
       ),
-      body: _buildSuggestions(context),
+      body: _buildList(context),
       floatingActionButton: new FloatingActionButton(
         onPressed: _showDialog,
         tooltip: 'Increment',
@@ -28,12 +29,17 @@ class NodeViewState extends State<NodeView> {
   void initState() {
     super.initState();
     if (isRoot) {
-      updateNodesFromDb();
+      updateFromDb();
     }
   }
 
-  Widget _buildSuggestions(BuildContext context) {
-    _suggestions.addAll(this.children);
+  Widget _buildList(BuildContext context) {
+    List<Widget> widgets = List<Widget>();
+    widgets.addAll(childrenNodes
+        .map((dynamic node) => _buildCollectionRow(node))
+        .toList());
+//    var _videos = widgets
+//        .addAll(videos.map((dynamic video) => _buildVideoRow(video)).toList());
     return ListView(
         padding: const EdgeInsets.all(16.0),
         // The itemBuilder callback is called once per suggested word pairing,
@@ -42,17 +48,17 @@ class NodeViewState extends State<NodeView> {
         // For odd rows, the function adds a Divider widget to visually
         // separate the entries. Note that the divider may be difficult
         // to see on smaller devices.
-        children: children.map((dynamic node) => _buildRow(node)).toList());
+        children: widgets);
   }
 
   void _showDialog() {
     showDialog(
         context: context,
-        builder: (BuildContext context) => new NodeForm(updateNodesFromDb, null,
+        builder: (BuildContext context) => new NodeForm(updateFromDb, null,
             parentNode: currentNode, isRoot: isRoot));
   }
 
-  Widget _buildRow(NodeContainer node) {
+  Widget _buildCollectionRow(NodeContainer node) {
     return ListTile(
       leading: new Icon(
         node.category.icon,
@@ -81,16 +87,24 @@ class NodeViewState extends State<NodeView> {
     );
   }
 
+
+
   nodesRefresh(QuerySnapshot value) {
-    setState(() => children = NodeContainer.fromDb(value));
+    setState(() => childrenNodes = NodeContainer.fromDb(value));
+  }
+
+  videosRefresh(QuerySnapshot value) {
+    setState(() => videos = Video.fromDb(value));
   }
 
   //refreshes the the children nodes from the database
-  updateNodesFromDb() {
+  updateFromDb() {
     if (isRoot) {
       db.getRootNodes(nodesRefresh);
+      db.getRootVideos(videosRefresh);
     } else {
       db.getNodesByParent(currentNode, nodesRefresh);
+      db.getVideosByParent(currentNode, videosRefresh);
     }
   }
 }
@@ -101,10 +115,12 @@ class NodeView extends StatefulWidget {
       this.childrenNodes,
       this.title,
       this.currentNode,
-      this.isRoot = false})
+      this.isRoot = false,
+      this.videos})
       : super(key: key);
 
   final List<NodeContainer> childrenNodes;
+  final List<Video> videos;
   final DocumentReference currentNode;
   final bool isRoot;
   final String title;
@@ -112,10 +128,11 @@ class NodeView extends StatefulWidget {
   @override
   NodeViewState createState() {
     var state = new NodeViewState();
-    state.children = this.childrenNodes;
+    state.childrenNodes = this.childrenNodes;
     state.title = title;
     state.currentNode = currentNode;
     state.isRoot = isRoot;
+    state.videos = videos;
     return state;
   }
 }

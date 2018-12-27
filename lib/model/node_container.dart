@@ -1,47 +1,5 @@
 part of catalog_tree;
 
-class MovesMain extends StatelessWidget {
-  const MovesMain({Key key}) : super(key: key);
-
-  static const String routeName = '/pesto';
-
-  @override
-  Widget build(BuildContext context) => new MovesHome();
-}
-
-class MovesHome extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    //  return const RecipeGridPage(recipes: kMoveDetails);
-  }
-}
-
-class MovesFavorites extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    //return new RecipeGridPage(recipes: _favoriteRecipes.toList());
-  }
-}
-
-class MoveStyle extends TextStyle {
-  const MoveStyle({
-    double fontSize: 12.0,
-    FontWeight fontWeight,
-    Color color: Colors.black87,
-    double letterSpacing,
-    double height,
-  }) : super(
-          inherit: false,
-          color: color,
-          fontFamily: 'Raleway',
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-          textBaseline: TextBaseline.alphabetic,
-          letterSpacing: letterSpacing,
-          height: height,
-        );
-}
-
 class NodeRoute {
   const NodeRoute._({this.name, this.icon});
 
@@ -107,5 +65,6 @@ class NodeContainer {
           name: node.name,
           icon: Icons.perm_media,
         ),
-        routeName = MovesMain.routeName;
+  //TODO adjust to create a valid route name
+        routeName = node.name;
 }

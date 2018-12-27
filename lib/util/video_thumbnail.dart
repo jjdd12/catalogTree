@@ -7,8 +7,12 @@ class VideoThumbnail extends ImageProvider<VideoThumbnail> {
 
   final ThumbFormat imageFormat;
 
-  VideoThumbnail(this.path,
+  final Function thumbnailCallback;
+
+  VideoThumbnail(
+      this.path,
       {
+        this.thumbnailCallback,
         this.savePath = '/storage/emulated/0/Android/data/jhony.app.catalog/files',
         this.imageFormat = ThumbFormat.PNG,
       });
@@ -33,6 +37,7 @@ class VideoThumbnail extends ImageProvider<VideoThumbnail> {
         quality: 30);
 
     File imageFile = File(await thumb);
+    thumbnailCallback(imageFile.path);
     final Uint8List bytes = await imageFile.readAsBytes();
     if (bytes.lengthInBytes == 0)
       return null;

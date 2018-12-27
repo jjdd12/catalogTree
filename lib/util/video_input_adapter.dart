@@ -28,9 +28,10 @@ class VideoInputAdapter {
     }
   }
 
-  Widget getThumbnail() {
+  Widget getThumbnail(Function thumbCallback) {
+    VideoThumbnail thumbnailProvider =  VideoThumbnail(file.path, thumbnailCallback: thumbCallback );
     return FadeInImage(
-        image: VideoThumbnail(file.path),
+        image: thumbnailProvider,
         placeholder: AssetImage("packages/flutter_gallery_assets/food/icons/main.png"),
         fit: BoxFit.cover
     );

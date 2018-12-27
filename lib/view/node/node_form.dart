@@ -73,9 +73,9 @@ class NodeFormState extends State<NodeForm> {
           ),
           ImageFormField<VideoInputAdapter>(
             shouldAllowMultiple: false,
-            onSaved: (val) => _data["video"] = val,
+            onSaved: (val) => _data["video"] = val[0].file.toString(),
             initializeFileAsImage: (file) => VideoInputAdapter.fromFile(file),
-            previewImageBuilder: (_, image) => image.getThumbnail(),
+            previewImageBuilder: (_, image) => image.getThumbnail((String thumbPath) => _data["thumbnail"] = thumbPath),
             buttonBuilder: (BuildContext context, int num) => Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
@@ -94,8 +94,7 @@ class NodeFormState extends State<NodeForm> {
                               color: Theme.of(context).primaryColor,
                               fontWeight: FontWeight.bold))
                     ])),
-          ),
-          SizedBox(
+          ), SizedBox(
             height: 13.0,
           ),
           Padding(
@@ -106,7 +105,7 @@ class NodeFormState extends State<NodeForm> {
                 // the form is invalid.
                 if (_formKey.currentState.validate()) {
                   _formKey.currentState.save();
-                  saveCollectionNode();
+                  saveVideo();
                 }
               },
               child: Text('Save'),
@@ -147,7 +146,7 @@ class NodeFormState extends State<NodeForm> {
                   // the form is invalid.
                   if (_formKey.currentState.validate()) {
                     _formKey.currentState.save();
-                    saveCollectionNode();
+                    saveCollection();
                   }
                 },
                 child: Text('Save'),
@@ -160,15 +159,27 @@ class NodeFormState extends State<NodeForm> {
         body: body);
   }
 
-  void saveCollectionNode() {
+  void saveCollection() {
     //TODO handle fails and complete
     _data["parent"] = parentNode;
-    var acl = new Map<String, Map>();
-    acl[_user.uid] = AclLevel.toMap(AclLevel.forOwner());
-    _data["acl"] = acl;
+    _data["acl"] = new Map<String, Map>();
+    _data["acl"][_user.uid] = AclLevel.toMap(AclLevel.forOwner());
     _data["is_root"] = isRoot;
     _data["owner"] = _user.uid;
     _db.createNode(_data);
+    this.onSave();
+    //this one closes the form popup
+    Navigator.pop(context);
+  }
+
+  void saveVideo(){
+    _data["acl"] = new Map<String, Map>();
+    _data["acl"][_user.uid] = AclLevel.toMap(AclLevel.forOwner());
+    _data["type"]= VideoType.local.toString();
+    _data["parent"] = parentNode;
+    _data["creator"] = _user.uid;
+    _data["is_root"] = isRoot;
+    _db.createVideo(_data);
     this.onSave();
     //this one closes the form popup
     Navigator.pop(context);
